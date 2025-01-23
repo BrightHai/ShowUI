@@ -223,7 +223,7 @@ def main(args):
         deepspeed.init_distributed(dist_backend="nccl", rank=args.global_rank, world_size=args.world_size)
         timestamp = broadcast_timestamp(0, args.local_rank)
 
-    args.log_dir = os.path.join(args.log_base_dir, args.exp_id, timestamp)
+    args.log_dir = os.path.join(args.log_base_dir, args.exp_id, "01")
     args.tmp_dir = os.path.join(args.log_dir, "tmp")
 
     # must provide wandb-key
