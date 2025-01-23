@@ -187,6 +187,7 @@ def parse_args(args):
     parser.add_argument("--batch_size", default=1, type=int, help="batch size per device per step")
     parser.add_argument("--grad_accumulation_steps", default=1, type=int)
     parser.add_argument("--val_batch_size", default=1, type=int)
+    parser.add_argument("--last_ckpt", action="store_true", default=False)
     parser.add_argument("--gradient_checkpointing", action="store_true", default=False)
     
     # Model Checkpoint or Evaluation strategies
@@ -576,6 +577,8 @@ def main(args):
             best_score = 0
 
         if args.no_eval or is_best:
+            if args.last_ckpt and epoch < args.epochs-1:
+                continue
             save_dir = os.path.join(args.log_dir, "ckpt_model")
             if args.global_rank == 0:
                 os.makedirs(save_dir, exist_ok=True)
