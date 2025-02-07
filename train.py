@@ -187,6 +187,7 @@ def parse_args(args):
     parser.add_argument("--batch_size", default=1, type=int, help="batch size per device per step")
     parser.add_argument("--grad_accumulation_steps", default=1, type=int)
     parser.add_argument("--val_batch_size", default=1, type=int)
+    parser.add_argument("--min_score", default=0.5, type=float)
     parser.add_argument("--last_ckpt", action="store_true", default=False)
     parser.add_argument("--gradient_checkpointing", action="store_true", default=False)
     
@@ -570,6 +571,7 @@ def main(args):
 
         if args.no_eval == False and val_loader is not None:
             score = validate(val_loader, model_engine, processor, epoch, global_step, writer, args)
+            print(f"Score:{score}, last best:{best_score}")
             is_best = score > best_score
             best_score = max(score, best_score)
         else:
@@ -577,6 +579,8 @@ def main(args):
             best_score = 0
 
         if args.no_eval or is_best:
+            if args.min_score > best_score and best_score != 0:
+                continue
             if args.last_ckpt and epoch < args.epochs-1:
                 continue
             save_dir = os.path.join(args.log_dir, "ckpt_model")
