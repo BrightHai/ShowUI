@@ -9,8 +9,10 @@ pip install -r requirements.txt --user
 ```
 
 ## 📦Setup Datasets
-Download grounding training dataset -- [ShowUI-desktop](https://huggingface.co/datasets/showlab/ShowUI-desktop-8K).
-Download grounding evaluation dataset -- [ScreenSpot](https://huggingface.co/datasets/KevinQHLin/ScreenSpot)
+### Grounding datasets
+- Download grounding training dataset -- [ShowUI-desktop](https://huggingface.co/datasets/showlab/ShowUI-desktop-8K) and [ShowUI-Web](https://huggingface.co/datasets/showlab/ShowUI-web)
+- Download [AMEX](https://huggingface.co/datasets/Yuxiang007/AMEX) then use our `prepare/hf_amex.py` to create metadata.
+- Download grounding evaluation dataset -- [ScreenSpot](https://huggingface.co/datasets/KevinQHLin/ScreenSpot)
 
 You can use huggingface-cli to download these datasets easily.
 ```
@@ -29,6 +31,11 @@ $_DATA_DIR
         - images
         - metadata
 ```
+
+### Navigtion datasets
+- Download [GUIAct](https://huggingface.co/datasets/yiye2023/GUIAct) then use our `prepare/hf_guiact.ipynb` to create metadata for each split (i.e., web, mobile).
+
+- Set up Mind2Web, AITW, Miniwob follow [SeeClick's Instruction](https://github.com/njucckevin/SeeClick/blob/main/agent_tasks/readme_agent.md). Then use our `prepare/hf_mind2web/aitw/miniwob.py` to process them and get the metadata.
 
 ## ⚙️Define Dataloader
 You can simply re-use existed implementation of `dset_shared_grounding.py` for UI grounding;
@@ -140,10 +147,16 @@ Once you finished the training, you can use the following cmd to save the model 
 
 ```bash
 exp_dir="$_SAVE_DIR/$exp_id/2024-11-28_17-30-32/"
-
+showui_dir=$(pwd)
 ckpt_dir="${exp_dir}/ckpt_model/"
+merge_dir="${ckpt_dir}/merged_model"
+
 cd "$ckpt_dir" || { echo "Failed to cd to $ckpt_dir"; exit 1; }
 python zero_to_fp32.py . pytorch_model.bin
 mkdir -p merged_model
-CUDA_VISIBLE_DEVICES="0" python merge_weight.py --weight="$ckpt_dir/pytorch_model.bin" --lora_r=32 --lora_alpha=64
+
+cd "$showui_dir"
+python3 merge_weight.py --exp_dir="$exp_dir"
+
+echo "$merge_dir"
 ```

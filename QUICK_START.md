@@ -30,7 +30,7 @@ model = Qwen2VLForConditionalGeneration.from_pretrained(
 min_pixels = 256*28*28
 max_pixels = 1344*28*28
 
-processor = AutoProcessor.from_pretrained("Qwen/Qwen2-VL-2B-Instruct", min_pixels=min_pixels, max_pixels=max_pixels)
+processor = AutoProcessor.from_pretrained("showlab/ShowUI-2B", min_pixels=min_pixels, max_pixels=max_pixels)
 ```
 
 ❗ Enable **Int8 quantization** for efficiency.
@@ -145,7 +145,7 @@ action_map = {
 ```python
 img_url = 'examples/chrome.png'
 split='web'
-system_prompt = _NAV_SYSTEM.format(_APP=split, _ACTION_SPACE=action_map[split])
+system_prompt = _NAV_SYSTEM.format(_APP=split, _ACTION_SPACE=action_map[split]) + _NAV_FORMAT
 query = "Search the weather for the New York city."
 
 messages = [
