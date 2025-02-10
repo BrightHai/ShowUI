@@ -67,7 +67,8 @@ def main(args):
         setattr(args, key, value)
 
     args.save_path = args.exp_dir + "/ckpt_model/merged_model"
-    args.weight_url = args.exp_dir + "/ckpt_model/pytorch_model.bin"
+    if not args.weight_url:
+        args.weight_url = args.exp_dir + "/ckpt_model/pytorch_model.bin"
 
     torch_dtype = torch.float32
     if args.precision == "bf16":
