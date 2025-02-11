@@ -39,6 +39,7 @@ def parse_args(args):
 
     # # Training and save
     # parser.add_argument("--weight", type=str, required=True)
+    parser.add_argument("--weight_url", type=str, default="Not provided")
     return parser.parse_args(args)
 
 def find_target_linear_names(model, num_lora_modules=-1, lora_namespan_exclude=["self_attn", "lm_head"], verbose=True):
@@ -67,7 +68,7 @@ def main(args):
         setattr(args, key, value)
 
     args.save_path = args.exp_dir + "/ckpt_model/merged_model"
-    if not args.weight_url:
+    if args.weight_url == "Not provided":
         args.weight_url = args.exp_dir + "/ckpt_model/pytorch_model.bin"
 
     torch_dtype = torch.float32
